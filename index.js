@@ -20,10 +20,11 @@ module.exports = {
   name: 'ember-progress-bar',
 
   treeForVendor: function() {
-    var treePath = path.join(path.dirname(require.resolve('progressbar.js')), '/..')
-    return new Funnel(treePath, {
-      destDir: 'progressbar.js'
-    });
+//     Removed this to fix Windows Paths
+//     var treePath = path.join(path.dirname(require.resolve('progressbar.js')), '/..')
+//     return new Funnel(treePath, {
+//       destDir: 'progressbar.js'
+//     });
   },
 
   treeForAddon: function(app) {
