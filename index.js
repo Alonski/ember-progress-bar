@@ -27,7 +27,7 @@ module.exports = {
 //     });
   },
 
-  treeForAddon: function(app) {
+  treeForAddon: function() {
     var app = findRoot(this);
 
     app.import('vendor/progressbar.js/dist/progressbar.min.js');

@@ -1,12 +1,7 @@
-import Ember from 'ember';
-
-const {
-  Component,
-  assign,
-  get,
-  set,
-  typeOf
-} = Ember;
+import Component from '@ember/component';
+import { assign } from '@ember/polyfills';
+import { set, get, getProperties } from '@ember/object';
+import { isPresent, typeOf } from '@ember/utils';
 
 function deepObjectAssign(object) {
   Object.keys(object).forEach((key) => {
@@ -24,7 +19,8 @@ export default Component.extend({
   onAnimationComplete: null,
 
   shape: 'Line',
-  options: { },
+
+  setProgress: null,
 
   defaultStep(state, bar) {
     bar.setText((bar.value() * 100).toFixed(0));
@@ -34,7 +30,7 @@ export default Component.extend({
     this._super(...args);
 
     const shape = get(this, 'shape');
-    const options = deepObjectAssign(get(this, 'options'));
+    const options = deepObjectAssign(get(this, 'options') || {});
 
     if (get(this, 'useDefaultStep')) {
       set(options, 'step', get(this, 'defaultStep'));
@@ -48,9 +44,20 @@ export default Component.extend({
   didRender(...args) {
     this._super(...args);
 
-    const progress = get(this, 'progress');
+    const { progressBar, progress, setProgress } = getProperties(
+      this,
+      'progressBar',
+      'progress',
+      'setProgress'
+    );
 
-    get(this, 'progressBar').animate(progress, () => this.sendAction('onAnimationComplete'));
+    if (isPresent(setProgress)) {
+      progressBar.set(setProgress);
+    }
+
+    get(this, 'progressBar').animate(progress, () => {
+      if (this.get('onAnimationComplete')) this.get('onAnimationComplete')();
+    });
   },
 
   willDestroyElement(...args) {
